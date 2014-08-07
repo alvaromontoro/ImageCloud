@@ -1,24 +1,24 @@
 {
     "name": "imagecloud",
-    "title": "jQuery ImageCloud",
+    "title": "imageCloud",
     "description": "jQuery plug-in based on Google's Doodle designed for the Christmas holidays on 2010.",
     "keywords": [
         "image",
-        "animation"
+		"gallery",
+        "animation",
+		"slideshow",
+		"jquery",
+		"photo",
+		"cloud",
+		"doodle",
+		"google"
     ],
-    "version": "2.0.0",
+    "version": "2.0.1",
     "author": {
         "name": "Alvaro Montoro",
 		"email": "alvaromontoro@gmail.com",
         "url": "http://www.alvaromontoro.com"
     },
-    "maintainers": [
-        {
-            "name": "Alvaro Montoro",
-			"email": "alvaromontoro@gmail.com",
-			"url": "http://www.alvaromontoro.com"
-        }
-    ],
     "licenses": [
         {
             "type": "GPLv3",
@@ -27,8 +27,9 @@
     ],
     "bugs": "https://github.com/alvaromontoro/ImageCloud/issues",
     "homepage": "https://github.com/alvaromontoro/ImageCloud",
-    "docs": "https://github.com/alvaromontoro/ImageCloud",
-    "download": "https://github.com/alvaromontoro/ImageCloud",
+    "docs": "https://github.com/alvaromontoro/ImageCloud/wiki",
+    "download": "https://github.com/alvaromontoro/ImageCloud/releases",
+	"demo":"http://alvaromontoro.com/jquery/imageCloud/demo.php",
     "dependencies": {
         "jquery": ">=1.5"
     }
