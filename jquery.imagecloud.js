@@ -1,7 +1,7 @@
 /*
- * ImageCloud - jQuery plugin 2.0.2
+ * ImageCloud - jQuery plugin 2.1.0
  *
- * Copyright (c) 2011-2014 Alvaro Montoro (alvaromontoro@gmail.com)
+ * Developed by Alvaro Montoro (alvaromontoro@gmail.com)
  *
  * Licensed under the GPL license:
  *   http://www.gnu.org/licenses/gpl.html
@@ -37,12 +37,12 @@
 				// compare it to the rest of the images, to make sure that no one overlaps
                 for (x=0; x < arrFrames.length; x++) {
 
-                    var a1=arrFrames[x][0];
-                    var a2=arrFrames[x][1];
+                    var a1=arrFrames[x].posX;
+                    var a2=arrFrames[x].posY;
                     var b1=auxX;
                     var b2=auxY;
-                    var awidth=arrFrames[x][2];
-                    var aheight=arrFrames[x][3];
+                    var awidth=arrFrames[x].width;
+                    var aheight=arrFrames[x].height;
                     var bwidth=sizeX;
                     var bheight=sizeY;
 
@@ -57,66 +57,68 @@
                 
             }
             
-            function ic_calculatePosition(arrFrames, activeFrame, attempt, tryAttempt) {
+            function ic_calculatePosition(arrFrames, activeFrame, attempt, targetSize, currentImage, tryAttempt) {
 
-                if (ic_currentImage == 0) {
-                    ic_posX=0;
-                    ic_posY=0;
-                    ic_bgPosX=0;
-                    ic_bgPosY=0;
-
-                    var auxFrame=new Array(4);
-                    auxFrame[0]=ic_posX;
-                    auxFrame[1]=ic_posY;
-                    auxFrame[2]=ic_imageSizes[ic_imageType][0]
-                    auxFrame[3]=ic_imageSizes[ic_imageType][1]
-                    arrFrames.push(auxFrame);
+                if (currentImage == 0) {
+				
+                    arrFrames.push({
+						posX: 0,
+						posY: 0,
+						bgPosX: 0,
+						bgPosY: 0,
+						width: targetSize.width,
+						height: targetSize.height
+					});
 
                     return 1;
 
-                } else {
+                } else if (activeFrame > 0) {
+					
+					var ic_posX = 0; var ic_posY = 0;
+					
+					switch (tryAttempt) {
+						case 0: {
+							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1));
+							ic_posY=arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1+20;
+							break;
+						}
+						case 1: {
+							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1));
+							ic_posY=arrFrames[activeFrame-1].posY/1 - arrFrames[activeFrame-1].height/1- 20;
+							break;
+						}
+						case 2: {
+							ic_posX=arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1+20;
+							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1));
+							break;
+						}
+						case 3: {
+							ic_posX=arrFrames[activeFrame-1].posX/1 - arrFrames[activeFrame-1].width/1 - 20;
+							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1));
+							break;
+						}
+					}
 
-                    if (activeFrame > 0) {
-                        switch (tryAttempt) {
-                            case 0: {
-                                ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1));
-                                ic_posY=arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1+20;
-                                break;
-                            }
-                            case 1: {
-                                ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1));
-                                ic_posY=arrFrames[activeFrame-1][1]/1 - arrFrames[activeFrame-1][3]/1- 20;
-                                break;
-                            }
-                            case 2: {
-                                ic_posX=arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1+20;
-                                ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1));
-                                break;
-                            }
-                            case 3: {
-                                ic_posX=arrFrames[activeFrame-1][0]/1 - arrFrames[activeFrame-1][2]/1 - 20;
-                                ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1));
-                                break;
-                            }
-                        }
+					if (ic_collision(ic_posX, ic_posY, targetSize.width, targetSize.height, arrFrames, settings) == 1) { return 0; }
+					
+					var ic_bgPosX=(Math.floor(Math.random() * (targetSize.width - ic_arrayImages[currentImage].width)));
+					var ic_bgPosY=(Math.floor(Math.random() * (targetSize.height - ic_arrayImages[currentImage].height)));
 
-                        if (ic_collision(ic_posX, ic_posY, ic_imageSizes[ic_imageType][0], ic_imageSizes[ic_imageType][1], arrFrames, settings) == 1) { return 0; }
-                        
-                        ic_bgPosX=(Math.floor(Math.random() * (ic_imageSizes[ic_imageType][0] - ic_arrayImages[ic_currentImage].width)));
-                        ic_bgPosY=(Math.floor(Math.random() * (ic_imageSizes[ic_imageType][1] - ic_arrayImages[ic_currentImage].height)));
+					ic_bgPosX=ic_bgPosX - ic_bgPosX % 5;
+					ic_bgPosY=ic_bgPosY - ic_bgPosY % 5;
 
-                        ic_bgPosX=ic_bgPosX - ic_bgPosX % 5;
-                        ic_bgPosY=ic_bgPosY - ic_bgPosY % 5;
+					// save the frame in the list of frames
+					arrFrames.push({
+						posX: ic_posX,
+						posY: ic_posY,
+						bgPosX: ic_bgPosX,
+						bgPosY: ic_bgPosY,
+						width: targetSize.width,
+						height: targetSize.height
+					});
 
-                        var auxFrame=new Array(4);
-                        auxFrame[0]=ic_posX;
-                        auxFrame[1]=ic_posY;
-                        auxFrame[2]=ic_imageSizes[ic_imageType][0]
-                        auxFrame[3]=ic_imageSizes[ic_imageType][1]
-                        arrFrames.push(auxFrame);
-
-                        return 1;
-                    }
+					return 1;
+					
                 }
                 
                 return 0;
@@ -128,36 +130,28 @@
             };
 
             var $this=$(this);
-            var ic_strSizes="";
             var ic_strCloud="";
-            var ic_strExit =0;
+            var ic_exit = false;
             var ic_currentImage=0;
-            var ic_validPos=0;
-            var ic_imageType=0;
             var ic_arrayImages;
-            var ic_posX=0;
-            var ic_posY=0;
             var ic_arrayFrames=new Array();
             // these are the default sizes for the frames (width x height)
             var ic_imageSizes =[[50,50], [60,60], [70,70], [80,80], [90,90], [100,100], [120,120], [50,60], [70,50], [80,120], [50,100], [60,150], [150,80], [120,80], [100,60], [150,50], [50,150]];
 
             // change the target div to the required size
             if ($this.css("position") != "absolute") { $this.css("position", "relative"); };
-            $this.height(settings.height);
-            $this.width(settings.width);
-            $this.css("overflow", "visible");
-            $this.attr("class", "imagecloud");
+            $this.css({ overflow: "visible", height: settings.height, width: settings.width }).addClass("imagecloud");
 
             // get all the images inside the div
             ic_arrayImages=$this.find("img");
 
             // while there are images, we put them in the cloud
-            while (ic_strExit == 0 && ic_currentImage < ic_arrayImages.length) {
+            while (!ic_exit && ic_currentImage < ic_arrayImages.length) {
 
                 var auxIc_currentImage=ic_currentImage;
-
-                ic_validPos=0;
-                ic_imageType=Math.floor(Math.random()*(ic_imageSizes.length));
+                var ic_validPos=0;
+                var ic_imageType = Math.floor(Math.random()*(ic_imageSizes.length));
+				var ic_targetSize = { width: ic_imageSizes[ic_imageType][0], height:ic_imageSizes[ic_imageType][1] }
                 
                 // BEGINNING OF calculateCoordinates
                 while (auxIc_currentImage > -1) {
@@ -166,7 +160,7 @@
                     var auxMaxAttempsPerSector=100;
 
                     while (auxAttempts < auxMaxAttempsPerSector*4) {
-                        ic_validPos=ic_calculatePosition(ic_arrayFrames, auxIc_currentImage, auxAttempts, auxAttempts%4);
+                        ic_validPos=ic_calculatePosition(ic_arrayFrames, auxIc_currentImage, auxAttempts, ic_targetSize, ic_currentImage, auxAttempts%4);
                         if (ic_validPos==1) { auxAttempts=1000; auxIc_currentImage=-1000; }
                         auxAttempts++;
                     }
@@ -176,36 +170,37 @@
                 // END OF calculateCoordinates
                 
                 if (ic_validPos == 1) {
-                    ic_strSizes=ic_strSizes+'var ic' + numImageClouds + '_i'+ic_currentImage+'w  ='+ic_imageSizes[ic_imageType][0]+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'h  ='+ic_imageSizes[ic_imageType][1]+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'t  ='+ic_posY+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'l  ='+ic_posX+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgt='+ic_bgPosY+'; '+
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgl='+ic_bgPosX+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgw='+ic_arrayImages[ic_currentImage].width+'; ' +
-                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgh='+ic_arrayImages[ic_currentImage].height+';\n';
-                                                
-                    ic_strCloud=ic_strCloud+'<div id="ic' + numImageClouds + '_i'+ic_currentImage+'" class="ci_imagen" '
-                    
-                    if (settings.link && ic_arrayImages[ic_currentImage].title) { ic_strCloud=ic_strCloud+' onclick="window.location=\''+ic_arrayImages[ic_currentImage].title+'\'" '; }
-                    
-                    ic_strCloud=ic_strCloud+' style="overflow:hidden;position:absolute;border-radius:' + settings.borderRadius + 'px;-moz-border-radius:' + settings.borderRadius + 'px;-webkit-border-radius:' + settings.borderRadius + 'px;border:' + settings.borderSize + 'px ' + settings.borderStyle + ' ' + settings.color + ';cursor:pointer;top:'+ic_posY+'px;left:'+ic_posX+'px;width:'+ic_imageSizes[ic_imageType][0]+'px;height:'+ic_imageSizes[ic_imageType][1]+'px;"><img src="'+ic_arrayImages[ic_currentImage].src+'" width="'+ic_arrayImages[ic_currentImage].width+'" height="'+ic_arrayImages[ic_currentImage].height+'" style="position:absolute;left: '+ic_bgPosX+'px;top:'+ic_bgPosY+'px;" /></div>\n';
-
+				
+					ic_strCloud += '<div id="ic' + numImageClouds + '_i'+ic_currentImage+'" ' +
+					                  ' class="ci_imagen" ' +
+									  ' style="overflow:hidden;position:absolute;border-radius:' + settings.borderRadius + 'px;-moz-border-radius:' + settings.borderRadius + 'px;-webkit-border-radius:' + settings.borderRadius + 'px;border:' + settings.borderSize + 'px ' + settings.borderStyle + ' ' + settings.color + ';cursor:pointer;top:'+ ic_arrayFrames[ic_arrayFrames.length-1].posY +'px;left:'+ ic_arrayFrames[ic_arrayFrames.length-1].posX +'px;width:' + ic_arrayFrames[ic_arrayFrames.length-1].width +'px;height:'+ic_arrayFrames[ic_arrayFrames.length-1].height+'px;" ' +
+									  ' data-width="' + ic_arrayFrames[ic_arrayFrames.length-1].width + '" ' +
+									  ' data-height="' + ic_arrayFrames[ic_arrayFrames.length-1].height + '" ' +
+									  ' data-posy="' + ic_arrayFrames[ic_arrayFrames.length-1].posY + '" ' +
+									  ' data-posx="' + ic_arrayFrames[ic_arrayFrames.length-1].posX + '" ' +
+									  ' data-bgposx="' + ic_arrayFrames[ic_arrayFrames.length-1].bgPosX + '" ' +
+									  ' data-bgposy="' + ic_arrayFrames[ic_arrayFrames.length-1].bgPosY + '" ' +
+									  ' data-picwidth="' + ic_arrayImages[ic_currentImage].width + '" ' +
+									  ' data-picheight="' + ic_arrayImages[ic_currentImage].height + '" ';
+					if (settings.link && ic_arrayImages[ic_currentImage].title) { ic_strCloud+=' onclick="window.location=\''+ic_arrayImages[ic_currentImage].title+'\'" '; }
+					ic_strCloud += '><img src="'+ic_arrayImages[ic_currentImage].src+'" width="'+ic_arrayImages[ic_currentImage].width+'" height="'+
+								 ic_arrayImages[ic_currentImage].height+'" style="position:absolute;left: '+ic_arrayFrames[ic_arrayFrames.length-1].bgPosX+'px;top:'+
+								 ic_arrayFrames[ic_arrayFrames.length-1].bgPosY+'px;" /></div>\n';
+								 
                     ic_currentImage++;
                 } else {
-                    ic_strExit=1;
+                    ic_exit = true;
                 }
                 
             }
 
             // display the images
-			$this.html("<script>" + ic_strSizes + "</script>" + ic_strCloud);
+			$this.html(ic_strCloud);
 
             $(this).find(".ci_imagen").mouseenter(function() {
                        
                         if (!this.ao) {
-                            this.ao={id:this.id, ft:eval(this.id+"t"), fl:eval(this.id+"l"), fh:eval(this.id+"h"), fw:eval(this.id+"w"), bt:eval(this.id+"bgt"), bl:eval(this.id+"bgl"), bh:eval(this.id+"bgh"), bw:eval(this.id+"bgw"), st:0};
-
+                            this.ao={id:this.id, ft:$(this).data("posy"), fl:$(this).data("posx"), fh:$(this).data("height"), fw:$(this).data("width"), bt:$(this).data("bgposy"), bl:$(this).data("bgposx"), bh:$(this).data("picheight"), bw:$(this).data("picwidth"), st:0};
                         }
                        
                         $(this.ao).stop(true, false).animate({
