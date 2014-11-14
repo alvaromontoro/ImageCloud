@@ -1,5 +1,5 @@
 /*
- * ImageCloud - jQuery plugin 2.1.0
+ * ImageCloud - jQuery plugin 2.1.1
  *
  * Developed by Alvaro Montoro (alvaromontoro@gmail.com)
  *
@@ -30,8 +30,8 @@
             function ic_collision(auxX, auxY, sizeX, sizeY, arrFrames, auxSettings) {
 			
 				// check that the image is within limits of the frame
-                if (auxX/1+sizeX/1+auxSettings.borderSize*2 > auxSettings.width) { return 1; }
-                if (auxY/1+sizeY/1+auxSettings.borderSize*2 > auxSettings.height) { return 1; }
+                if (auxX+sizeX+auxSettings.borderSize*2 > auxSettings.width) { return 1; }
+                if (auxY+sizeY+auxSettings.borderSize*2 > auxSettings.height) { return 1; }
                 if (auxY < 0 || auxX < 0) { return 1; }
 
 				// compare it to the rest of the images, to make sure that no one overlaps
@@ -78,23 +78,23 @@
 					
 					switch (tryAttempt) {
 						case 0: {
-							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1));
-							ic_posY=arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1+20;
+							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX+arrFrames[activeFrame-1].width));
+							ic_posY=arrFrames[activeFrame-1].posY+arrFrames[activeFrame-1].height+20;
 							break;
 						}
 						case 1: {
-							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1));
-							ic_posY=arrFrames[activeFrame-1].posY/1 - arrFrames[activeFrame-1].height/1- 20;
+							ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1].posX+arrFrames[activeFrame-1].width));
+							ic_posY=arrFrames[activeFrame-1].posY - arrFrames[activeFrame-1].height- 20;
 							break;
 						}
 						case 2: {
-							ic_posX=arrFrames[activeFrame-1].posX/1+arrFrames[activeFrame-1].width/1+20;
-							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1));
+							ic_posX=arrFrames[activeFrame-1].posX+arrFrames[activeFrame-1].width+20;
+							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY+arrFrames[activeFrame-1].height));
 							break;
 						}
 						case 3: {
-							ic_posX=arrFrames[activeFrame-1].posX/1 - arrFrames[activeFrame-1].width/1 - 20;
-							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY/1+arrFrames[activeFrame-1].height/1));
+							ic_posX=arrFrames[activeFrame-1].posX - arrFrames[activeFrame-1].width - 20;
+							ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1].posY+arrFrames[activeFrame-1].height));
 							break;
 						}
 					}
