@@ -1,5 +1,5 @@
 /*
- * ImageCloud - jQuery plugin 2.0.1
+ * ImageCloud - jQuery plugin 2.0.2
  *
  * Copyright (c) 2011-2014 Alvaro Montoro (alvaromontoro@gmail.com)
  *
@@ -57,7 +57,7 @@
                 
             }
             
-            function ic_calculatePosition(arrayFrames, activeFrame, attempt, tryAttempt) {
+            function ic_calculatePosition(arrFrames, activeFrame, attempt, tryAttempt) {
 
                 if (ic_currentImage == 0) {
                     ic_posX=0;
@@ -70,7 +70,7 @@
                     auxFrame[1]=ic_posY;
                     auxFrame[2]=ic_imageSizes[ic_imageType][0]
                     auxFrame[3]=ic_imageSizes[ic_imageType][1]
-                    arrayFrames.push(auxFrame);
+                    arrFrames.push(auxFrame);
 
                     return 1;
 
@@ -79,28 +79,28 @@
                     if (activeFrame > 0) {
                         switch (tryAttempt) {
                             case 0: {
-                                ic_posX=Math.floor(Math.random() * (arrayFrames[activeFrame-1][0]/1+arrayFrames[activeFrame-1][2]/1));
-                                ic_posY=arrayFrames[activeFrame-1][1]/1+arrayFrames[activeFrame-1][3]/1+20;
+                                ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1));
+                                ic_posY=arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1+20;
                                 break;
                             }
                             case 1: {
-                                ic_posX=Math.floor(Math.random() * (arrayFrames[activeFrame-1][0]/1+arrayFrames[activeFrame-1][2]/1));
-                                ic_posY=arrayFrames[activeFrame-1][1]/1 - arrayFrames[activeFrame-1][3]/1- 20;
+                                ic_posX=Math.floor(Math.random() * (arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1));
+                                ic_posY=arrFrames[activeFrame-1][1]/1 - arrFrames[activeFrame-1][3]/1- 20;
                                 break;
                             }
                             case 2: {
-                                ic_posX=arrayFrames[activeFrame-1][0]/1+arrayFrames[activeFrame-1][2]/1+20;
-                                ic_posY=Math.floor(Math.random() * (arrayFrames[activeFrame-1][1]/1+arrayFrames[activeFrame-1][3]/1));
+                                ic_posX=arrFrames[activeFrame-1][0]/1+arrFrames[activeFrame-1][2]/1+20;
+                                ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1));
                                 break;
                             }
                             case 3: {
-                                ic_posX=arrayFrames[activeFrame-1][0]/1 - arrayFrames[activeFrame-1][2]/1 - 20;
-                                ic_posY=Math.floor(Math.random() * (arrayFrames[activeFrame-1][1]/1+arrayFrames[activeFrame-1][3]/1));
+                                ic_posX=arrFrames[activeFrame-1][0]/1 - arrFrames[activeFrame-1][2]/1 - 20;
+                                ic_posY=Math.floor(Math.random() * (arrFrames[activeFrame-1][1]/1+arrFrames[activeFrame-1][3]/1));
                                 break;
                             }
                         }
 
-                        if (ic_collision(ic_posX, ic_posY, ic_imageSizes[ic_imageType][0], ic_imageSizes[ic_imageType][1], arrayFrames, settings) == 1) { return 0; }
+                        if (ic_collision(ic_posX, ic_posY, ic_imageSizes[ic_imageType][0], ic_imageSizes[ic_imageType][1], arrFrames, settings) == 1) { return 0; }
                         
                         ic_bgPosX=(Math.floor(Math.random() * (ic_imageSizes[ic_imageType][0] - ic_arrayImages[ic_currentImage].width)));
                         ic_bgPosY=(Math.floor(Math.random() * (ic_imageSizes[ic_imageType][1] - ic_arrayImages[ic_currentImage].height)));
@@ -113,7 +113,7 @@
                         auxFrame[1]=ic_posY;
                         auxFrame[2]=ic_imageSizes[ic_imageType][0]
                         auxFrame[3]=ic_imageSizes[ic_imageType][1]
-                        arrayFrames.push(auxFrame);
+                        arrFrames.push(auxFrame);
 
                         return 1;
                     }
@@ -233,28 +233,33 @@
                        
                     }).mouseleave(function() {
                        
-                        $(this.ao).stop(true, false).animate({
-                            st: 0
-                        }, {
-                            duration: settings.speed,
-
-                            step: function(now,fx) {
-                               
-                                var changeT=Math.floor((fx.elem.bt)*(now/100));
-                                var changeL=Math.floor((fx.elem.bl)*(now/100));
-                                $("#"+fx.elem.id).css({
-                                    width: fx.elem.fw+(fx.elem.bw-fx.elem.fw)*(now/100),
-                                    height: fx.elem.fh+(fx.elem.bh-fx.elem.fh)*(now/100),
-                                    top: fx.elem.ft+changeT,
-                                    left: fx.elem.fl+changeL,
-                                    zIndex:9999
-
-                                }).find("img").css({
-                                    top: fx.elem.bt - changeT,
-                                    left: fx.elem.bl - changeL
-                                });
-                            }
-                        }, 'linear');
+					    var auxElem = "";
+						
+                        $(this.ao).stop(true, false).animate(
+							{ st: 0 }, 
+							{
+								duration: settings.speed,
+								step: function(now,fx) {
+									auxElem = fx.elem.id;
+									var changeT=Math.floor((fx.elem.bt)*(now/100));
+									var changeL=Math.floor((fx.elem.bl)*(now/100));
+									$("#"+fx.elem.id).css({
+										width: fx.elem.fw+(fx.elem.bw-fx.elem.fw)*(now/100),
+										height: fx.elem.fh+(fx.elem.bh-fx.elem.fh)*(now/100),
+										top: fx.elem.ft+changeT,
+										left: fx.elem.fl+changeL,
+										zIndex:99998
+									}).find("img").css({
+										top: fx.elem.bt - changeT,
+										left: fx.elem.bl - changeL
+									});
+								}, 
+								easing: 'linear', 
+								complete: function() { 
+									$("#" + auxElem).css({zIndex:9999}); 
+								}
+							}
+						);
                        
                     });
 					
