@@ -1,7 +1,7 @@
 /*
- * ImageCloud - jQuery plugin 2.0
+ * ImageCloud - jQuery plugin 2.0.1
  *
- * Copyright (c) 2011-2014 Alvaro Montoro Dominguez
+ * Copyright (c) 2011-2014 Alvaro Montoro (alvaromontoro@gmail.com)
  *
  * Licensed under the GPL license:
  *   http://www.gnu.org/licenses/gpl.html
@@ -11,20 +11,24 @@
 ;(function ($) {
 
     $.fn.imageCloud=function (options) {
-	    
-        var settings={
-            'width': 600,
-            'height': 400,
-            'link': false,
-            'color': '#800000',
-			'speed': 250,
-            'borderSize': 6,
-            'borderStyle': 'solid',
-            'borderRadius': 0
-        };
+	
+		// injecting the difference function needed for the plug-in
+		$("body").append('<script>function difference(value1, value2) { value1=value1.replace("px", "");value2=value2.replace("px", "");value3=((value1/1+value2/1)+"px");return value3;};</script>');
+		var numImageClouds = 0;
 
         return this.each(function () {
         
+			var settings={
+				'width': 600,
+				'height': 400,
+				'link': false,
+				'color': '#800000',
+				'speed': 250,
+				'borderSize': 6,
+				'borderStyle': 'solid',
+				'borderRadius': 0
+			};
+		
             function ic_collision(auxX, auxY, sizeX, sizeY, arrFrames, auxSettings) {
                 if (auxX/1+sizeX/1+auxSettings.borderSize*2 > auxSettings.width) { return 1; }
                 if (auxY/1+sizeY/1+auxSettings.borderSize*2 > auxSettings.height) { return 1; }
@@ -171,16 +175,16 @@
                 // END OF calculateCoordinates
                 
                 if (ic_validPos == 1) {
-                    ic_strSizes=ic_strSizes+'var ic_i'+ic_currentImage+'w  ='+ic_imageSizes[ic_imageType][0]+'; ' +
-                                            'var ic_i'+ic_currentImage+'h  ='+ic_imageSizes[ic_imageType][1]+'; ' +
-                                            'var ic_i'+ic_currentImage+'t  ='+ic_posY+'; ' +
-                                            'var ic_i'+ic_currentImage+'l  ='+ic_posX+'; ' +
-                                            'var ic_i'+ic_currentImage+'bgt='+ic_bgPosY+'; '+
-                                            'var ic_i'+ic_currentImage+'bgl='+ic_bgPosX+'; ' +
-                                            'var ic_i'+ic_currentImage+'bgw='+ic_arrayImages[ic_currentImage].width+'; ' +
-                                            'var ic_i'+ic_currentImage+'bgh='+ic_arrayImages[ic_currentImage].height+';\n';
+                    ic_strSizes=ic_strSizes+'var ic' + numImageClouds + '_i'+ic_currentImage+'w  ='+ic_imageSizes[ic_imageType][0]+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'h  ='+ic_imageSizes[ic_imageType][1]+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'t  ='+ic_posY+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'l  ='+ic_posX+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgt='+ic_bgPosY+'; '+
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgl='+ic_bgPosX+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgw='+ic_arrayImages[ic_currentImage].width+'; ' +
+                                            'var ic' + numImageClouds + '_i'+ic_currentImage+'bgh='+ic_arrayImages[ic_currentImage].height+';\n';
                                                 
-                    ic_strCloud=ic_strCloud+'<div id="ic_i'+ic_currentImage+'" class="ci_imagen" '
+                    ic_strCloud=ic_strCloud+'<div id="ic' + numImageClouds + '_i'+ic_currentImage+'" class="ci_imagen" '
                     
                     if (settings.link && ic_arrayImages[ic_currentImage].title) { ic_strCloud=ic_strCloud+' onclick="window.location=\''+ic_arrayImages[ic_currentImage].title+'\'" '; }
                     
@@ -194,7 +198,7 @@
             }
 
             // display the images
-            $this.html('<script>function difference(value1, value2) { value1=value1.replace("px", "");value2=value2.replace("px", "");value3=((value1/1+value2/1)+"px");return value3;};\n'+ic_strSizes+"</script>\n"+ic_strCloud);
+			$this.html("<script>" + ic_strSizes + "</script>" + ic_strCloud);
 
             $(".ci_imagen").mouseenter(function() {
                        
@@ -252,6 +256,8 @@
                         }, 'linear');
                        
                     });
+					
+			numImageClouds++;
         });
 
     };
