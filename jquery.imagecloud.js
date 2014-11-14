@@ -1,5 +1,5 @@
 /*
- * ImageCloud - jQuery plugin 2.1.1
+ * ImageCloud - jQuery plugin 3.0.0
  *
  * Developed by Alvaro Montoro (alvaromontoro@gmail.com)
  *
