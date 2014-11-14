@@ -10,12 +10,10 @@
  
 ;(function ($) {
 
+	var numImageClouds = 0;
+
     $.fn.imageCloud=function (options) {
 	
-		// injecting the difference function needed for the plug-in
-		$("body").append('<script>function difference(value1, value2) { value1=value1.replace("px", "");value2=value2.replace("px", "");value3=((value1/1+value2/1)+"px");return value3;};</script>');
-		var numImageClouds = 0;
-
         return this.each(function () {
         
 			var settings={
@@ -30,10 +28,13 @@
 			};
 		
             function ic_collision(auxX, auxY, sizeX, sizeY, arrFrames, auxSettings) {
+			
+				// check that the image is within limits of the frame
                 if (auxX/1+sizeX/1+auxSettings.borderSize*2 > auxSettings.width) { return 1; }
                 if (auxY/1+sizeY/1+auxSettings.borderSize*2 > auxSettings.height) { return 1; }
                 if (auxY < 0 || auxX < 0) { return 1; }
 
+				// compare it to the rest of the images, to make sure that no one overlaps
                 for (x=0; x < arrFrames.length; x++) {
 
                     var a1=arrFrames[x][0];
@@ -200,7 +201,7 @@
             // display the images
 			$this.html("<script>" + ic_strSizes + "</script>" + ic_strCloud);
 
-            $(".ci_imagen").mouseenter(function() {
+            $(this).find(".ci_imagen").mouseenter(function() {
                        
                         if (!this.ao) {
                             this.ao={id:this.id, ft:eval(this.id+"t"), fl:eval(this.id+"l"), fh:eval(this.id+"h"), fw:eval(this.id+"w"), bt:eval(this.id+"bgt"), bl:eval(this.id+"bgl"), bh:eval(this.id+"bgh"), bw:eval(this.id+"bgw"), st:0};

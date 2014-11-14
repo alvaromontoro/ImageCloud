@@ -11,6 +11,8 @@
 				position:absolute;
 				top:50%;
 				left:25%;
+				-ms-transform: translate(-50%, -50%); 
+				-webkit-transform:translate(-50%, -50%);
 				transform:translate(-50%, -50%);
 			}
 			
@@ -18,15 +20,33 @@
 				position:absolute;
 				top:50%;
 				left:75%;
+				-ms-transform: translate(-50%, -50%); 
+				-webkit-transform:translate(-50%, -50%);
 				transform:translate(-50%, -50%);
 			}
 		</style>
+		
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$("#myDiv1").imageCloud();
+			$("#myDiv2").imageCloud({
+				'width': 500,
+				'height': 400,
+				'link': false,
+				'color': '#00ff00',
+				'speed': 1000,
+				'borderSize': 20,
+				'borderStyle': 'dotted',
+				'borderRadius': 20
+			});
+		});
+		</script>
 		
 	</head>
 	
 	<body>
 	
-		<div id="myDiv1" class="imagecloud">
+		<div id="myDiv1">
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud1.jpg"  width="350" height="250" alt="1"  />
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud2.jpg"  width="200" height="300" alt="2"  />
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud3.jpg"  width="300" height="200" alt="3"  />
@@ -34,7 +54,7 @@
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud5.jpg"  width="250" height="175" alt="5"  />
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud6.jpg"  width="250" height="200" alt="6"  />
 		</div>
-		<div id="myDiv2" class="imagecloud">
+		<div id="myDiv2">
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud7.jpg"  width="300" height="225" alt="7"  />
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud8.jpg"  width="300" height="200" alt="8"  />
             <img src="http://alvaromontoro.com/jquery/imageCloud/upload/cloud9.jpg"  width="300" height="200" alt="9"  />
