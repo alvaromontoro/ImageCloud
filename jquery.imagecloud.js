@@ -104,9 +104,6 @@
 					var ic_bgPosX=(Math.floor(Math.random() * (targetSize.width - ic_arrayImages[currentImage].width)));
 					var ic_bgPosY=(Math.floor(Math.random() * (targetSize.height - ic_arrayImages[currentImage].height)));
 
-					ic_bgPosX=ic_bgPosX - ic_bgPosX % 5;
-					ic_bgPosY=ic_bgPosY - ic_bgPosY % 5;
-
 					// save the frame in the list of frames
 					arrFrames.push({
 						posX: ic_posX,
@@ -150,8 +147,14 @@
 
                 var auxIc_currentImage=ic_currentImage;
                 var ic_validPos=0;
-                var ic_imageType = Math.floor(Math.random()*(ic_imageSizes.length));
-				var ic_targetSize = { width: ic_imageSizes[ic_imageType][0], height:ic_imageSizes[ic_imageType][1] }
+				var ic_targetSize;
+
+				if ($(ic_arrayImages[ic_currentImage]).data("width") && $(ic_arrayImages[ic_currentImage]).data("height") && $(ic_arrayImages[ic_currentImage]).data("width") > 0 && $(ic_arrayImages[ic_currentImage]).data("height") > 0) {
+					ic_targetSize = { width: $(ic_arrayImages[ic_currentImage]).data("width"), height:$(ic_arrayImages[ic_currentImage]).data("height") };
+				} else {
+					var ic_imageType = Math.floor(Math.random()*(ic_imageSizes.length));
+					ic_targetSize = { width: ic_imageSizes[ic_imageType][0], height:ic_imageSizes[ic_imageType][1] };
+				}
                 
                 // BEGINNING OF calculateCoordinates
                 while (auxIc_currentImage > -1) {
@@ -172,7 +175,7 @@
                 if (ic_validPos == 1) {
 				
 					ic_strCloud += '<div id="ic' + numImageClouds + '_i'+ic_currentImage+'" ' +
-					                  ' class="ci_imagen" ' +
+					                  ' class="ic_imagen" ' +
 									  ' style="overflow:hidden;position:absolute;border-radius:' + settings.borderRadius + 'px;-moz-border-radius:' + settings.borderRadius + 'px;-webkit-border-radius:' + settings.borderRadius + 'px;border:' + settings.borderSize + 'px ' + settings.borderStyle + ' ' + settings.color + ';cursor:pointer;top:'+ ic_arrayFrames[ic_arrayFrames.length-1].posY +'px;left:'+ ic_arrayFrames[ic_arrayFrames.length-1].posX +'px;width:' + ic_arrayFrames[ic_arrayFrames.length-1].width +'px;height:'+ic_arrayFrames[ic_arrayFrames.length-1].height+'px;" ' +
 									  ' data-width="' + ic_arrayFrames[ic_arrayFrames.length-1].width + '" ' +
 									  ' data-height="' + ic_arrayFrames[ic_arrayFrames.length-1].height + '" ' +
@@ -197,7 +200,7 @@
             // display the images
 			$this.html(ic_strCloud);
 
-            $(this).find(".ci_imagen").mouseenter(function() {
+            $(this).find(".ic_imagen").mouseenter(function() {
                        
                         if (!this.ao) {
                             this.ao={id:this.id, ft:$(this).data("posy"), fl:$(this).data("posx"), fh:$(this).data("height"), fw:$(this).data("width"), bt:$(this).data("bgposy"), bl:$(this).data("bgposx"), bh:$(this).data("picheight"), bw:$(this).data("picwidth"), st:0};
