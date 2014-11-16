@@ -1,5 +1,5 @@
 /*
- * ImageCloud - jQuery plugin 3.0.0
+ * ImageCloud - jQuery plugin 3.0.2
  *
  * Developed by Alvaro Montoro (alvaromontoro@gmail.com)
  *
@@ -64,8 +64,6 @@
                     arrFrames.push({
 						posX: 0,
 						posY: 0,
-						bgPosX: 0,
-						bgPosY: 0,
 						width: targetSize.width,
 						height: targetSize.height
 					});
@@ -100,16 +98,11 @@
 					}
 
 					if (ic_collision(ic_posX, ic_posY, targetSize.width, targetSize.height, arrFrames, settings) == 1) { return 0; }
-					
-					var ic_bgPosX=(Math.floor(Math.random() * (targetSize.width - ic_arrayImages[currentImage].width)));
-					var ic_bgPosY=(Math.floor(Math.random() * (targetSize.height - ic_arrayImages[currentImage].height)));
 
 					// save the frame in the list of frames
 					arrFrames.push({
 						posX: ic_posX,
 						posY: ic_posY,
-						bgPosX: ic_bgPosX,
-						bgPosY: ic_bgPosY,
 						width: targetSize.width,
 						height: targetSize.height
 					});
@@ -164,7 +157,19 @@
 
                     while (auxAttempts < auxMaxAttempsPerSector*4) {
                         ic_validPos=ic_calculatePosition(ic_arrayFrames, auxIc_currentImage, auxAttempts, ic_targetSize, ic_currentImage, auxAttempts%4);
-                        if (ic_validPos==1) { auxAttempts=1000; auxIc_currentImage=-1000; }
+                        if (ic_validPos==1) { 
+							var ic_bgPosX, ic_bgPosY;
+							if ($(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posx") && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posx") >= 0 && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posy") && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posy") >= 0) {
+								ic_bgPosX = -$(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posx");
+								ic_bgPosY = -$(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posy");
+							} else {
+								ic_bgPosX=(Math.floor(Math.random() * (ic_targetSize.width - ic_arrayImages[(ic_arrayFrames.length-1)].width)));
+								ic_bgPosY=(Math.floor(Math.random() * (ic_targetSize.height - ic_arrayImages[(ic_arrayFrames.length-1)].height)));
+							}
+							ic_arrayFrames[ic_arrayFrames.length-1].bgPosX = ic_bgPosX;
+							ic_arrayFrames[ic_arrayFrames.length-1].bgPosY = ic_bgPosY;
+							auxAttempts=1000; auxIc_currentImage=-1000; 
+						}
                         auxAttempts++;
                     }
 
