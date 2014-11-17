@@ -24,7 +24,9 @@
 				'speed': 250,
 				'borderSize': 6,
 				'borderStyle': 'solid',
-				'borderRadius': 0
+				'borderRadius': 0,
+				'boxWidth':-1,
+				'boxHeight':-1
 			};
 		
             function ic_collision(auxX, auxY, sizeX, sizeY, arrFrames, auxSettings) {
@@ -146,7 +148,11 @@
 					ic_targetSize = { width: $(ic_arrayImages[ic_currentImage]).data("width"), height:$(ic_arrayImages[ic_currentImage]).data("height") };
 				} else {
 					var ic_imageType = Math.floor(Math.random()*(ic_imageSizes.length));
-					ic_targetSize = { width: ic_imageSizes[ic_imageType][0], height:ic_imageSizes[ic_imageType][1] };
+					var auxWidth = ic_imageSizes[ic_imageType][0];
+					var auxHeight = ic_imageSizes[ic_imageType][1];
+					if (settings.boxWidth > 0) { auxWidth = settings.boxWidth; }
+					if (settings.boxHeight > 0) { auxHeight = settings.boxHeight; }
+					ic_targetSize = { width: auxWidth, height: auxHeight };
 				}
                 
                 // BEGINNING OF calculateCoordinates
