@@ -1,5 +1,5 @@
 /*
- * ImageCloud - jQuery plugin 3.0.2
+ * ImageCloud - jQuery plugin 3.1.0
  *
  * Developed by Alvaro Montoro (alvaromontoro@gmail.com)
  *
@@ -26,7 +26,8 @@
 				'borderStyle': 'solid',
 				'borderRadius': 0,
 				'boxWidth':-1,
-				'boxHeight':-1
+				'boxHeight':-1,
+				'random':true
 			};
 		
             function ic_collision(auxX, auxY, sizeX, sizeY, arrFrames, auxSettings) {
@@ -59,16 +60,25 @@
                 
             }
             
-            function ic_calculatePosition(arrFrames, activeFrame, attempt, targetSize, currentImage, tryAttempt) {
+            function ic_calculatePosition(arrFrames, activeFrame, attempt, targetSize, currentImage, tryAttempt, auxSettings) {
 
                 if (currentImage == 0) {
 				
-                    arrFrames.push({
-						posX: 0,
-						posY: 0,
-						width: targetSize.width,
-						height: targetSize.height
-					});
+					if (auxSettings.random) {
+						arrFrames.push({
+							posX: Math.floor(Math.random()*auxSettings.width*0.9),
+							posY: Math.floor(Math.random()*auxSettings.height*0.9),
+							width: targetSize.width,
+							height: targetSize.height
+						});
+					} else {
+						arrFrames.push({
+							posX: 0,
+							posY: 0,
+							width: targetSize.width,
+							height: targetSize.height
+						});
+					}
 
                     return 1;
 
@@ -162,7 +172,7 @@
                     var auxMaxAttempsPerSector=100;
 
                     while (auxAttempts < auxMaxAttempsPerSector*4) {
-                        ic_validPos=ic_calculatePosition(ic_arrayFrames, auxIc_currentImage, auxAttempts, ic_targetSize, ic_currentImage, auxAttempts%4);
+                        ic_validPos=ic_calculatePosition(ic_arrayFrames, auxIc_currentImage, auxAttempts, ic_targetSize, ic_currentImage, auxAttempts%4, settings);
                         if (ic_validPos==1) { 
 							var ic_bgPosX, ic_bgPosY;
 							if ($(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posx") && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posx") >= 0 && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posy") && $(ic_arrayImages[(ic_arrayFrames.length-1)]).data("posy") >= 0) {
